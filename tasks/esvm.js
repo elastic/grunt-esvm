@@ -37,9 +37,19 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('esvm', 'Create elasticsearch clusters from grunt.', function (keepalive) {
     // the config name, "esvm:<target>"
     var name = this.target;
+    var flags = _(grunt.option('esvm-flags'))
+    .tap(function (s) { return _.isString(s) ? s.split(',') : []; })
+    .map(function (f) { return f.trim(); })
+    .filter(Boolean)
+    .value();
+
     var options = this.options({
-      quiet: false
+      quiet: false,
+      fresh: _.contains(flags, 'fresh'),
+      purge: _.contains(flags, 'purge')
     });
+
+    process.exit();
 
     if (activeClusters[name]) {
       grunt.fail.warn('There is already a "' + name + '" cluster running.');
