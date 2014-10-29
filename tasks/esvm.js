@@ -49,8 +49,6 @@ module.exports = function (grunt) {
       purge: _.contains(flags, 'purge')
     });
 
-    process.exit();
-
     if (activeClusters[name]) {
       grunt.fail.warn('There is already a "' + name + '" cluster running.');
     }
