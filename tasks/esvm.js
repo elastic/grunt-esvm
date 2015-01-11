@@ -74,12 +74,13 @@ module.exports = function (grunt) {
       grunt.log.ok('Started ' + nodes.length + ' Elasticsearch nodes.');
 
       var table = new Table({
-        head: ['port', 'node name']
+        head: ['port', 'version', 'node name']
       });
 
       nodes.forEach(function (node) {
         table.push([
           node.port,
+          node.version || node.branch,
           node.name
         ]);
       });
