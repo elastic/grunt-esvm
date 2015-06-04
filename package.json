@@ -39,7 +39,7 @@
   "dependencies": {
     "cli-color": "~0.3.2",
     "cli-table": "~0.3.0",
-    "libesvm": "~0.0.11",
+    "libesvm": "~0.0.13",
     "lodash": "~2.4.1",
     "moment": "~2.8.3"
   }
