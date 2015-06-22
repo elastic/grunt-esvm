@@ -10,6 +10,9 @@ var libesvm = require('libesvm');
 var _ = require('lodash');
 var logClusterLogs = require('../lib/logClusterLogs');
 var Table = require('cli-table');
+var Promise = require('bluebird');
+var get = Promise.promisify(require('wreck').get, require('wreck'));
+var moment = require('moment');
 
 module.exports = function (grunt) {
 
@@ -63,26 +66,58 @@ module.exports = function (grunt) {
     }
 
     grunt.log.writeln('starting up "' + name + '" cluster');
-    var startup = cluster.install()
+    var startup = Promise.resolve(cluster.install())
     .then(function () {
       return cluster.installPlugins();
     })
     .then(function () {
       return cluster.start();
     })
+    .map(function (node) {
+      if (node.version) return node;
+
+      return get('http://localhost:' + node.port, { json: 'force' })
+      .spread(function (resp, payload) {
+        console.log(payload);
+        var sha = _.get(payload, 'version.build_hash', '').slice(0, 7);
+        var when = moment(_.get(payload, 'version.build_timestamp', 0)).fromNow();
+        node.branchInfo = node.branch + '@' + sha + ' (built ' + when + ')';
+        return node;
+      });
+    })
     .then(function (nodes) {
       grunt.log.ok('Started ' + nodes.length + ' Elasticsearch nodes.');
 
-      var table = new Table({
-        head: ['port', 'version', 'node name']
+      var showBranch = _.some(nodes, 'branch');
+      var showVersion = _.some(nodes, 'version');
+
+      var t = [
+        [
+          'port',
+          showBranch ? 'branch' : null,
+          showVersion ? 'version' : null,
+          'node name'
+        ]
+      ].concat(nodes.map(function (node) {
+        return [
+          node.port,
+          showBranch ? node.branchInfo: null,
+          showVersion ? node.version : null,
+          node.name
+        ];
+      }))
+      .map(function (row) {
+        return _.reject(row, _.isNull);
       });
 
-      nodes.forEach(function (node) {
-        table.push([
-          node.port,
-          node.version || node.branch,
-          node.name
-        ]);
+      console.log(t);
+
+      var table = new Table({
+        head: t[0]
+      });
+
+      t.slice(1).forEach(function (r) {
+        table.push(r);
       });
 
       grunt.log.writeln(table.toString());
