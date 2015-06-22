@@ -78,7 +78,7 @@ module.exports = function (grunt) {
 
       return get('http://localhost:' + node.port, { json: 'force' })
       .spread(function (resp, payload) {
-        console.log(payload);
+        grunt.log.debug(payload);
         var sha = _.get(payload, 'version.build_hash', '').slice(0, 7);
         var when = moment(_.get(payload, 'version.build_timestamp', 0)).fromNow();
         node.branchInfo = node.branch + '@' + sha + ' (built ' + when + ')';
@@ -109,8 +109,6 @@ module.exports = function (grunt) {
       .map(function (row) {
         return _.reject(row, _.isNull);
       });
-
-      console.log(t);
 
       var table = new Table({
         head: t[0]
