@@ -1,7 +1,7 @@
 {
   "name": "grunt-esvm",
   "description": "Create elasticsearch clusters from grunt.",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "homepage": "https://github.com/spenceralger/grunt-esvm",
   "author": {
     "name": "Spencer Alger",
