@@ -80,8 +80,9 @@ module.exports = function (grunt) {
       .spread(function (resp, payload) {
         grunt.log.debug(payload);
         var sha = _.get(payload, 'version.build_hash', '').slice(0, 7);
-        var when = moment(_.get(payload, 'version.build_timestamp', 0)).fromNow();
-        node.branchInfo = node.branch + '@' + sha + ' (built ' + when + ')';
+        var ts = _.get(payload, 'version.build_timestamp', 0);
+        var when = ts === 'NA' ? '(build time unkown)' : ' (built ' + moment(ts).fromNow() + ')';
+        node.branchInfo = node.branch + '@' + sha + when;
         return node;
       });
     })
