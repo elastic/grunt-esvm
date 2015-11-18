@@ -43,7 +43,7 @@ Find a complete list of the options available at https://github.com/simianhacker
 
 #### options.quiet
 Type: `Boolean`
-Default value: `true`
+Default value: `false`
 
 The only additional option that you can specify in grunt-esvm is `quiet`. This will prevent elasticsearch from logging to the console, and will simply start it up in the backgroun.
 
