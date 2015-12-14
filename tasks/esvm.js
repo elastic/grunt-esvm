@@ -49,7 +49,8 @@ module.exports = function (grunt) {
     var options = this.options({
       quiet: false,
       fresh: _.contains(flags, 'fresh'),
-      purge: _.contains(flags, 'purge')
+      purge: _.contains(flags, 'purge'),
+      shield: undefined
     });
 
     if (activeClusters[name]) {
@@ -78,6 +79,8 @@ module.exports = function (grunt) {
 
       return get('http://localhost:' + node.port, { json: 'force' })
       .spread(function (resp, payload) {
+        if (resp.statusCode > 200) return;
+
         grunt.log.debug(payload);
         var sha = _.get(payload, 'version.build_hash', '').slice(0, 7);
         if (String(sha).match(/\$\{.+\}/)) {
@@ -105,10 +108,10 @@ module.exports = function (grunt) {
         ]
       ].concat(nodes.map(function (node) {
         return [
-          node.port,
-          showBranch ? node.branchInfo: null,
-          showVersion ? node.version : null,
-          node.name
+          node.port || '?',
+          showBranch ? node.branchInfo || '?': null,
+          showVersion ? node.version || '?': null,
+          node.name || '?'
         ];
       }))
       .map(function (row) {
