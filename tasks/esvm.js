@@ -79,7 +79,7 @@ module.exports = function (grunt) {
 
       return get('http://localhost:' + node.port, { json: 'force' })
       .spread(function (resp, payload) {
-        if (resp.statusCode > 200) return;
+        if (resp.statusCode > 200) return node;
 
         grunt.log.debug(payload);
         var sha = _.get(payload, 'version.build_hash', '').slice(0, 7);
