@@ -87,7 +87,7 @@ module.exports = function (grunt) {
           node.branchInfo = '- no build info -';
         }
 
-        var ts = _.get(payload, 'version.build_timestamp', 0);
+        var ts = _.get(payload, 'version.build_timestamp', _.get(payload, 'version.build_date', 0));
         var when = ts === 'NA' ? '(build time unkown)' : ' (built ' + moment(ts).fromNow() + ')';
         node.branchInfo = node.branch + '@' + sha + when;
         return node;
