@@ -133,6 +133,7 @@ module.exports = function (grunt) {
     if (keepalive === 'keepalive') {
       grunt.log.writeln('Keeping elasticsearch alive, to shutdown press command/control+c');
       process.on('SIGINT', _.partial(shutdown, name, this.async()));
+      cluster.on('error', _.bindKey(grunt.fail, 'fatal'));
     } else {
       startup.nodeify(this.async());
     }
