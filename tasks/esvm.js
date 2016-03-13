@@ -53,6 +53,22 @@ module.exports = function (grunt) {
       shield: undefined
     });
 
+    // deeply merge the default config
+    options.config = _.merge(options.config || {}, grunt.config.get('esvm.options.config') || {});
+
+    // strip null and undefined values from config after merge
+    (function stripNulls(obj) {
+      _.forOwn(obj, function forEachInner(val, key, obj) {
+        if (val == null) {
+          delete obj[key];
+        } else if (_.isPlainObject(val)) {
+          stripNulls(val);
+        } else if (_.isArray(val)) {
+          val.forEach(forEachInner);
+        }
+      });
+    }(options.config));
+
     if (activeClusters[name]) {
       grunt.fail.warn('There is already a "' + name + '" cluster running.');
     }
