@@ -54,7 +54,7 @@ module.exports = function (grunt) {
     });
 
     // deeply merge the default config
-    options.config = _.merge(options.config || {}, grunt.config.get('esvm.options.config') || {});
+    options.config = _.defaultsDeep(options.config || {}, grunt.config.get('esvm.options.config') || {});
 
     // strip null and undefined values from config after merge
     (function stripNulls(obj) {
@@ -75,6 +75,8 @@ module.exports = function (grunt) {
 
     var quiet = grunt.option('verbose') ? false : options.quiet;
     delete options.quiet;
+
+    grunt.log.debug('Creating libesvm cluster with: ' + JSON.stringify(options, null, '  '));
 
     var cluster = activeClusters[name] = libesvm.createCluster(options);
 
