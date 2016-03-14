@@ -45,7 +45,14 @@ Find a complete list of the options available at https://github.com/simianhacker
 Type: `Boolean`
 Default value: `false`
 
-The only additional option that you can specify in grunt-esvm is `quiet`. This will prevent elasticsearch from logging to the console, and will simply start it up in the backgroun.
+An additional option that you can specify in `grunt-esvm` is `quiet`. This will prevent `elasticsearch` from logging to the console at all.
+
+#### options.level
+Type: `String`
+Default value: `'info'`
+Values: One of `['debug', 'info', 'warning', 'error', 'fatal']`
+
+An additional option that you can specify in `grunt-esvm` is `level`. This will determine the logging level from `elasticsearch` that will be output to the console.
 
 ### Usage Examples
 

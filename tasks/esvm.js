@@ -74,15 +74,16 @@ module.exports = function (grunt) {
     }
 
     var quiet = grunt.option('verbose') ? false : options.quiet;
+    var level = grunt.option('verbose') ? 'debug' : options.level || 'default';
+
     delete options.quiet;
+    delete options.level;
 
     var cluster = activeClusters[name] = libesvm.createCluster(options);
+    var log = logClusterLogs(cluster, level, quiet);
 
-    if (!quiet) {
-      logClusterLogs(cluster);
-    }
+    log('info', 'grunt - Starting up "' + name + '" cluster');
 
-    grunt.log.writeln('starting up "' + name + '" cluster');
     var startup = Promise.resolve(cluster.install())
     .then(function () {
       return cluster.installPlugins();
@@ -97,7 +98,7 @@ module.exports = function (grunt) {
       .spread(function (resp, payload) {
         if (resp.statusCode > 200) return node;
 
-        grunt.log.debug(payload);
+        log('debug', 'grunt - ' + payload);
         var sha = _.get(payload, 'version.build_hash', '').slice(0, 7);
         if (String(sha).match(/\$\{.+\}/)) {
           node.branchInfo = '- no build info -';
@@ -110,7 +111,7 @@ module.exports = function (grunt) {
       });
     })
     .then(function (nodes) {
-      grunt.log.ok('Started ' + nodes.length + ' Elasticsearch nodes.');
+      log('info', 'grunt - Started ' + nodes.length + ' Elasticsearch nodes.');
 
       var showBranch = _.some(nodes, 'branch');
       var showVersion = _.some(nodes, 'version');
@@ -142,12 +143,11 @@ module.exports = function (grunt) {
         table.push(r);
       });
 
-      grunt.log.writeln(table.toString());
+      log('info', 'grunt - ' + table.toString());
     });
 
-
     if (keepalive === 'keepalive') {
-      grunt.log.writeln('Keeping elasticsearch alive, to shutdown press command/control+c');
+      log('info', 'grunt - Keeping elasticsearch alive, to shutdown press command/control+c');
       process.on('SIGINT', _.partial(shutdown, name, this.async()));
       startup.catch(_.bindKey(grunt.fail, 'fatal'));
       cluster.on('error', _.bindKey(grunt.fail, 'fatal'));
