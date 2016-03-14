@@ -141,7 +141,7 @@ module.exports = function (grunt) {
         table.push(r);
       });
 
-      log('info', 'Started ' + nodes.length + ' Elasticsearch nodes.\n' + table.toString());
+      log('info', 'Started ' + nodes.length + ' Elasticsearch nodes.\n' + log.pad('info', table.toString()));
     });
 
     if (keepalive === 'keepalive') {
