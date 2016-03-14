@@ -96,9 +96,11 @@ module.exports = function (grunt) {
 
       return get('http://localhost:' + node.port, { json: 'force' })
       .spread(function (resp, payload) {
-        if (resp.statusCode > 200) return node;
+        if (resp.statusCode > 200) {
+          return node;
+        }
 
-        log('debug', 'grunt - ' + payload);
+        log('debug', 'grunt - Payload at http://localhost:' + node.port + '\n' + JSON.stringify(payload, null, 2));
         var sha = _.get(payload, 'version.build_hash', '').slice(0, 7);
         if (String(sha).match(/\$\{.+\}/)) {
           node.branchInfo = '- no build info -';
@@ -111,19 +113,15 @@ module.exports = function (grunt) {
       });
     })
     .then(function (nodes) {
-      log('info', 'grunt - Started ' + nodes.length + ' Elasticsearch nodes.');
-
       var showBranch = _.some(nodes, 'branch');
       var showVersion = _.some(nodes, 'version');
 
-      var t = [
-        [
-          'port',
-          showBranch ? 'branch' : null,
-          showVersion ? 'version' : null,
-          'node name'
-        ]
-      ].concat(nodes.map(function (node) {
+      var t = [[
+        'port',
+        showBranch ? 'branch' : null,
+        showVersion ? 'version' : null,
+        'node name'
+      ]].concat(nodes.map(function (node) {
         return [
           node.port || '?',
           showBranch ? node.branchInfo || '?': null,
@@ -143,7 +141,7 @@ module.exports = function (grunt) {
         table.push(r);
       });
 
-      log('info', 'grunt - ' + table.toString());
+      log('info', 'Started ' + nodes.length + ' Elasticsearch nodes.\n' + table.toString());
     });
 
     if (keepalive === 'keepalive') {
