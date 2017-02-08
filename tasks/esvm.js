@@ -95,7 +95,7 @@ module.exports = function (grunt) {
     .map(function (node) {
       if (node.version) return node;
 
-      return get('http://localhost:' + node.port, { json: 'force' })
+      return get('http://' + (node.address || 'localhost') + ':' + node.port, { json: 'force' })
       .spread(function (resp, payload) {
         if (resp.statusCode > 200) return node;
 
