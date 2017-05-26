@@ -1,7 +1,7 @@
 {
   "name": "grunt-esvm",
   "description": "Create elasticsearch clusters from grunt.",
-  "version": "3.2.8",
+  "version": "3.2.9",
   "homepage": "https://github.com/spenceralger/grunt-esvm",
   "license": "Apache-2.0",
   "author": {
